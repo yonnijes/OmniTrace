@@ -6,3 +6,20 @@ COPY . .
 RUN npm install --force
 EXPOSE 3333
 CMD ["npx", "nx", "serve", "backend", "--host", "0.0.0.0"]
+FROM node:20-slim
+
+# Instalamos pnpm globalmente
+RUN npm install -g pnpm
+
+WORKDIR /app
+
+# Copiamos solo los archivos de dependencias para aprovechar la caché de capas
+COPY package.json pnpm-lock.yaml* ./
+
+# Instalamos todas las dependencias (incluyendo las de desarrollo para Nx)
+RUN pnpm install
+
+# Exponemos los puertos típicos de Nx (puedes ajustarlos)
+EXPOSE 4200 3000
+
+# No ponemos un CMD fijo aquí, lo controlaremos desde el Compose
