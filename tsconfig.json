@@ -2,5 +2,24 @@
   "extends": "./tsconfig.base.json",
   "compileOnSave": false,
   "files": [],
-  "references": []
+  "references": [
+    {
+      "path": "./apps/api-e2e"
+    },
+    {
+      "path": "./apps/api"
+    },
+    {
+      "path": "./libs/domain"
+    },
+    {
+      "path": "./libs/infrastructure"
+    },
+    {
+      "path": "./libs/ui-shared"
+    },
+    {
+      "path": "./apps/map-web"
+    }
+  ]
 }

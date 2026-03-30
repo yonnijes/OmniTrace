@@ -1,0 +1,8 @@
+FROM node:20-alpine
+RUN apk add --no-cache libc6-compat
+WORKDIR /app
+COPY . .
+# Using --force to bypass the symlink issues in this workspace
+RUN npm install --force
+EXPOSE 3333
+CMD ["npx", "nx", "serve", "backend", "--host", "0.0.0.0"]

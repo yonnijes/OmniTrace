@@ -6,8 +6,8 @@
     "importHelpers": true,
     "isolatedModules": true,
     "lib": ["es2022"],
-    "module": "nodenext",
-    "moduleResolution": "nodenext",
+    "module": "ES2022",
+    "moduleResolution": "node",
     "noEmitOnError": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitOverride": true,
@@ -16,6 +16,14 @@
     "skipLibCheck": true,
     "strict": true,
     "target": "es2022",
-    "customConditions": ["@org/source"]
+    "baseUrl": ".",
+    "paths": {
+      "@omnitrace/domain": ["libs/domain/src/index.ts"],
+      "@omnitrace/domain/*": ["libs/domain/src/*"],
+      "@omnitrace/infrastructure": ["libs/infrastructure/src/index.ts"],
+      "@omnitrace/infrastructure/*": ["libs/infrastructure/src/*"],
+      "@omnitrace/ui-shared": ["libs/ui-shared/src/index.ts"],
+      "@omnitrace/ui-shared/*": ["libs/ui-shared/src/*"]
+    }
   }
 }

@@ -1,0 +1,25 @@
+{
+  "name": "@org/map-web",
+  "version": "0.0.1",
+  "private": true,
+  "nx": {
+    "name": "map-web",
+    "targets": {
+      "build": {
+        "executor": "@nx/vite:build",
+        "options": {
+          "outputPath": "dist/apps/map-web"
+        }
+      },
+      "serve": {
+        "executor": "@nx/vite:dev-server",
+        "options": {
+          "buildTarget": "map-web:build"
+        }
+      },
+      "test": {
+        "executor": "@nx/vite:test"
+      }
+    }
+  }
+}
