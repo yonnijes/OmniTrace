@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  # Servicio de Caché (Redis)
+  cache:
+    image: redis:alpine
+    container_name: omnitrace-cache-prod
+    command: redis-server --save 60 1 --loglevel warning
+    networks:
+      - omnitrace-network
+    volumes:
+      - redis-prod-data:/data
+    # En prod real podrías no exponer el puerto al exterior, solo a la red interna
+    ports:
+      - "6379:6379"
+
+  # API corriendo el build de producción
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+      target: api-runtime
+    container_name: omnitrace-api-prod
+    depends_on:
+      - cache
+    environment:
+      - NODE_ENV=production
+      - REDIS_HOST=cache
+      - REDIS_PORT=6379
+      - REDIS_TTL=3600
+      - OSRM_URL=https://routing.openstreetmap.de
+      - PROVIDER_TIMEOUT=5000
+    ports:
+      - "3000:3000"
+    networks:
+      - omnitrace-network
+
+  # Web servida por Nginx
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+      target: web-runtime
+    container_name: omnitrace-web-prod
+    depends_on:
+      - api
+    environment:
+      - NODE_ENV=production
+      - API_URL=http://localhost:3000
+    ports:
+      - "80:80"
+    networks:
+      - omnitrace-network
+
+networks:
+  omnitrace-network:
+    driver: bridge
+
+volumes:
+  redis-prod-data:

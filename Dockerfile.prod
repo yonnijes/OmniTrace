@@ -1,0 +1,28 @@
+# --- ETAPA 1: Construcción ---
+FROM node:20-slim AS builder
+RUN npm install -g pnpm
+WORKDIR /app
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile
+COPY . .
+# Compilamos ambos proyectos
+RUN pnpm nx build api --prod
+RUN pnpm nx build map-web --prod
+
+# --- ETAPA 2: Runtime API (Node) ---
+FROM node:20-slim AS api-runtime
+RUN apt-get update && apt-get install -y procps && rm -rf /var/lib/apt/lists/*
+RUN npm install -g pnpm
+WORKDIR /app
+# Solo traemos lo compilado y dependencias de producción
+COPY --from=builder /app/apps/api/dist .
+RUN pnpm install --prod
+EXPOSE 3000
+CMD ["node", "main.js"]
+
+# --- ETAPA 3: Runtime Web (Nginx) ---
+FROM nginx:stable-alpine AS web-runtime
+# Copiamos el build estático al servidor Nginx
+COPY --from=builder /app/dist/apps/map-web /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
